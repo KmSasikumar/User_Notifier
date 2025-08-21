@@ -1,22 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    View, Text, Image, TextInput, TouchableOpacity, StyleSheet
+    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL, API_KEY } from './config';
 
 const ProfileScreen = () => {
     const [profileImage, setProfileImage] = useState(require('../assets/images/profile.png'));
-    const [name, setName] = useState('User');
-    const [age, setAge] = useState('25');
-    const [bloodGroup, setBloodGroup] = useState('O+');
-    const [phoneNumber, setPhoneNumber] = useState('06-586 478 4581');
-    const [gender, setGender] = useState('Male');
-    const [profession, setProfession] = useState('Software Engineer');
-    const [bio, setBio] = useState('Passionate about coding and technology.');
-    const [memberSince, setMemberSince] = useState('2020');
-    const [membershipStatus, setMembershipStatus] = useState('Active');
+    const [name, setName] = useState('');
+    const [age, setAge] = useState('');
+    const [bloodGroup, setBloodGroup] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [gender, setGender] = useState('');
+    const [profession, setProfession] = useState('');
+    const [bio, setBio] = useState('');
+    const [memberSince, setMemberSince] = useState('');
+    const [membershipStatus, setMembershipStatus] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const token = await AsyncStorage.getItem('authToken');
+            if (token) {
+                try {
+                    const response = await fetch(`${API_URL}/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'x-api-key': API_KEY,
+                        },
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        setName(data.name || '');
+                        setAge(data.age || '');
+                        setBloodGroup(data.bloodGroup || '');
+                        setPhoneNumber(data.phoneNumber || '');
+                        setGender(data.gender || '');
+                        setProfession(data.profession || '');
+                        setBio(data.bio || '');
+                        setMemberSince(data.memberSince || '');
+                        setMembershipStatus(data.membershipStatus || '');
+                    } else {
+                        Alert.alert('Error', 'Failed to fetch profile.');
+                    }
+                } catch (error) {
+                    Alert.alert('Error', 'Unable to connect to the server.');
+                }
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleSave = async () => {
+        const token = await AsyncStorage.getItem('authToken');
+        if (token) {
+            try {
+                const response = await fetch(`${API_URL}/auth/me`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'x-api-key': API_KEY,
+                    },
+                    body: JSON.stringify({
+                        name,
+                        age,
+                        bloodGroup,
+                        phoneNumber,
+                        gender,
+                        profession,
+                        bio,
+                        memberSince,
+                        membershipStatus,
+                    }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    Alert.alert('Success', 'Profile updated successfully.');
+                    setIsEditing(false);
+                } else {
+                    Alert.alert('Error', 'Failed to update profile.');
+                }
+            } catch (error) {
+                Alert.alert('Error', 'Unable to connect to the server.');
+            }
+        }
+    };
 
     const handleSelectPhoto = async () => {
         try {
@@ -52,7 +123,13 @@ const ProfileScreen = () => {
             </View>
             <Text style={styles.name}>{name}</Text>
             <View style={styles.profileCard}>
-                <TouchableOpacity style={styles.editButton} onPress={() => setIsEditing(!isEditing)}>
+                <TouchableOpacity style={styles.editButton} onPress={() => {
+                    if (isEditing) {
+                        handleSave();
+                    } else {
+                        setIsEditing(true);
+                    }
+                }}>
                     <Ionicons name={isEditing ? 'checkmark-outline' : 'create-outline'} size={24} color="black" />
                 </TouchableOpacity>
 

@@ -1,5 +1,6 @@
 const express = require('express');
-const { register, login } = require('../controllers/authController');
+const { register, login, getMe, updateMe } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -20,6 +21,13 @@ router.post('/login', async (req, res, next) => {
         next(error);
     }
 });
+
+// GET /me - Get user profile
+router.get('/me', protect, getMe);
+
+// PUT /me - Update user profile
+router.put('/me', protect, updateMe);
+
 
 // Optional: Health check route to verify auth routes are working
 router.get('/health', (req, res) => {
