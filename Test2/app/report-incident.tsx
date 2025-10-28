@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../themes/ThemeProvider';
+import { API_URL, API_KEY } from './config';
 
 export default function ReportAccidentScreen() {
     const router = useRouter();
@@ -20,20 +21,40 @@ export default function ReportAccidentScreen() {
     const [priority, setPriority] = useState('');
 
     // Handle form submission
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!location.trim() || !message.trim()) {
             Alert.alert('Error', 'Please fill in both location and message.');
             return;
         }
 
-        Alert.alert(
-            'Accident Report',
-            `Location: ${location}\nMessage: ${message}\nPriority: ${priority || 'None selected'}`
-        );
+        try {
+            const response = await fetch(`${API_URL}/incidents/report-incident`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': API_KEY,
+                },
+                body: JSON.stringify({
+                    location,
+                    description: message,
+                    priority: priority || 'low',
+                }),
+            });
 
-        setLocation('');
-        setMessage('');
-        setPriority('');
+            const data = await response.json();
+
+            if (response.ok) {
+                Alert.alert('Success', 'Incident reported successfully.');
+                setLocation('');
+                setMessage('');
+                setPriority('');
+            } else {
+                Alert.alert('Error', data.message || 'Failed to report incident.');
+            }
+        } catch (error) {
+            console.error('Report incident error:', error);
+            Alert.alert('Error', 'Unable to connect to the server.');
+        }
     };
 
     return (

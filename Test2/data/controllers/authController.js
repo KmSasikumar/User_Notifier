@@ -15,6 +15,29 @@ exports.register = async (req, res) => {
   }
 };
 
+// Get user profile
+exports.getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Update user profile
+exports.updateMe = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.user.id, req.body, {
+            new: true,
+            runValidators: true,
+        }).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 // Login a user
 exports.login = async (req, res) => {
   const { email, password } = req.body;

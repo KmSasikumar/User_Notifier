@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
+import { API_URL, API_KEY } from './config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,11 +39,11 @@ export default function SignupScreen() {
             return;
         }
         try {
-            const response = await fetch('http://172.25.245.203:5000/api/auth/register', {
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'da837f630ad1c5eac399915414a99aa00c75ce2628bebaa3692645b7e2127b62'
+                    'x-api-key': API_KEY
                 },
                 body: JSON.stringify({ name, location, email, password })
             });

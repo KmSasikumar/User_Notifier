@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as WebBrowser from 'expo-web-browser';
 import { LinearGradient } from 'expo-linear-gradient';
+import { API_URL, API_KEY } from './config';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -39,11 +40,11 @@ export default function LoginScreen() {
         }
 
         try {
-            const response = await fetch('http://172.25.245.203:5000/api/auth/login', {
+            const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'da837f630ad1c5eac399915414a99aa00c75ce2628bebaa3692645b7e2127b62',
+                    'x-api-key': API_KEY,
                 },
                 body: JSON.stringify({ email, password }),
             });

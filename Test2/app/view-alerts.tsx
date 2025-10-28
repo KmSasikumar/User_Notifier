@@ -11,16 +11,10 @@ import {
     Easing,
     Platform,
     StatusBar,
+    Alert,
 } from 'react-native';
 import { useTheme } from '../themes/ThemeProvider';
-
-// Example accidents for today's ticker
-const accidentsToday = [
-    'Accident near Station Road at 9:15 AM',
-    'Minor collision on Highway 22 at 10:30 AM',
-    'Accident reported near Green Park at 11:05 AM',
-    'Two-vehicle crash on Elm Street at 12:45 PM',
-];
+import { API_URL, API_KEY } from './config';
 
 // Example quotes for random selection
 const quotes = [
@@ -38,9 +32,40 @@ export default function ViewAlerts() {
     const screenWidth = Dimensions.get('window').width;
     const translateX = useRef(new Animated.Value(0)).current;
     const [textWidth, setTextWidth] = useState(0);
+    const [incidents, setIncidents] = useState([]);
+    const [tickerText, setTickerText] = useState('');
 
-    // Combine accidents into one string, separated by "   |   "
-    const tickerText = accidentsToday.join('   |   ');
+    // Fetch incidents from the backend
+    useEffect(() => {
+        const fetchIncidents = async () => {
+            try {
+                const response = await fetch(`${API_URL}/incidents/incidents`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY,
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setIncidents(data);
+                    const incidentDescriptions = data.map(
+                        (incident) => `${incident.description} at ${incident.location}`
+                    );
+                    setTickerText(incidentDescriptions.join('   |   '));
+                } else {
+                    Alert.alert('Error', data.message || 'Failed to fetch incidents.');
+                }
+            } catch (error) {
+                console.error('Fetch incidents error:', error);
+                Alert.alert('Error', 'Unable to connect to the server.');
+            }
+        };
+
+        fetchIncidents();
+    }, []);
 
     // Randomize quote each time user accesses this page
     const [quoteIndex, setQuoteIndex] = useState(0);
@@ -57,7 +82,7 @@ export default function ViewAlerts() {
             startAnimation();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [textWidth]);
+    }, [textWidth, tickerText]);
 
     const startAnimation = () => {
         translateX.setValue(screenWidth);

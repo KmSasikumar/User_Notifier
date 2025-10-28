@@ -6,6 +6,14 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   location: { type: String, required: true },
+  age: { type: String },
+  bloodGroup: { type: String },
+  phoneNumber: { type: String },
+  gender: { type: String },
+  profession: { type: String },
+  bio: { type: String },
+  memberSince: { type: String },
+  membershipStatus: { type: String },
 });
 
 UserSchema.pre('save', async function (next) {
