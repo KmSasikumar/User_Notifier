@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const incidentRoutes = require('./routes/incidentRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
 const cors = require('cors');
 
 // Load environment variables
@@ -33,6 +34,7 @@ const apiAuth = (req, res, next) => {
 app.use('/api/auth', apiAuth, authRoutes);
 app.use('/api/incidents', apiAuth, incidentRoutes);
 app.use('/api/notifications', apiAuth, notificationRoutes);
+app.use('/api/statistics', apiAuth, statisticsRoutes);
 
 // Basic route to test server
 app.get('/', (req, res) => {

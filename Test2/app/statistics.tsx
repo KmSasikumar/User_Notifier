@@ -1,15 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     SafeAreaView,
     ScrollView,
+    ActivityIndicator,
 } from 'react-native';
 import { useTheme } from '../themes/ThemeProvider';
+import { getStatistics } from '../../data/services/statisticsService';
 
 export default function Statistics() {
     const { theme } = useTheme();
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStatistics = async () => {
+            try {
+                const data = await getStatistics();
+                setStats(data);
+            } catch (error) {
+                console.error('Failed to fetch statistics:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStatistics();
+    }, []);
+
+    if (loading) {
+        return (
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={theme.text} />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -23,26 +50,26 @@ export default function Statistics() {
                         {/* Accidents Total */}
                         <View style={styles.headingItem}>
                             <View style={[styles.colorDot, { backgroundColor: '#f97316' }]} />
-                            <Text style={[styles.headingText, { color: theme.text }]}>Accidents (Total): 2</Text>
+                            <Text style={[styles.headingText, { color: theme.text }]}>Accidents (Total): {stats?.totalAccidents ?? 'N/A'}</Text>
                         </View>
 
                         {/* Helps Today */}
                         <View style={styles.headingItem}>
                             <View style={[styles.colorDot, { backgroundColor: '#4ade80' }]} />
-                            <Text style={[styles.headingText, { color: theme.text }]}>Helps (Today): 5</Text>
+                            <Text style={[styles.headingText, { color: theme.text }]}>Helps (Today): {stats?.helpsToday ?? 'N/A'}</Text>
                         </View>
 
                         {/* Distance Today */}
                         <Text style={[styles.headingText, { color: theme.text }]}>Distance Today</Text>
                         <View style={styles.headingItem}>
                             <View style={[styles.colorDot, { backgroundColor: '#60a5fa' }]} />
-                            <Text style={[styles.headingText, { color: theme.text }]}>Distance (Today): 10 km</Text>
+                            <Text style={[styles.headingText, { color: theme.text }]}>Distance (Today): {stats?.distanceToday ?? 'N/A'} km</Text>
                         </View>
 
                         {/* Badge */}
                         <View style={styles.headingItem}>
                             <View style={[styles.colorDot, { backgroundColor: '#facc15' }]} />
-                            <Text style={[styles.headingText, { color: theme.text }]}>Badge: Gold</Text>
+                            <Text style={[styles.headingText, { color: theme.text }]}>Badge: {stats?.badge ?? 'N/A'}</Text>
                         </View>
                     </View>
                 </View>

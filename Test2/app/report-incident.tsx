@@ -7,38 +7,52 @@ import {
     StyleSheet,
     Alert
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../themes/ThemeProvider';
 
 export default function ReportAccidentScreen() {
     const router = useRouter();
     const { theme } = useTheme();
+    const { incidentType } = useLocalSearchParams();
 
     // State variables for location, message, and priority
     const [location, setLocation] = useState('');
     const [message, setMessage] = useState('');
-    const [priority, setPriority] = useState('');
 
     // Handle form submission
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!location.trim() || !message.trim()) {
             Alert.alert('Error', 'Please fill in both location and message.');
             return;
         }
 
-        Alert.alert(
-            'Accident Report',
-            `Location: ${location}\nMessage: ${message}\nPriority: ${priority || 'None selected'}`
-        );
+        try {
+            const response = await fetch('http://172.25.245.203:5000/api/incidents/report-incident', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'da837f630ad1c5eac399915414a99aa00c75ce2628bebaa3692645b7e2127b62',
+                },
+                body: JSON.stringify({ type: incidentType, location, message }),
+            });
 
-        setLocation('');
-        setMessage('');
-        setPriority('');
+            const data = await response.json();
+
+            if (response.ok) {
+                Alert.alert('Success', 'Incident reported successfully.');
+                router.push('/mainpage');
+            } else {
+                Alert.alert('Error', data.error || 'Failed to report incident.');
+            }
+        } catch (error) {
+            console.error('Report incident error:', error);
+            Alert.alert('Error', 'Unable to connect to the server.');
+        }
     };
 
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
-            <Text style={[styles.title, { color: theme.text }]}>Report Incident</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Report Incident: {incidentType}</Text>
 
             {/* Location Input */}
             <TextInput
@@ -58,31 +72,6 @@ export default function ReportAccidentScreen() {
                 onChangeText={setMessage}
                 multiline
             />
-
-            {/* Priority Selection */}
-            <Text style={[styles.label, { color: theme.text }]}>Select Priority:</Text>
-            <View style={styles.priorityContainer}>
-                <TouchableOpacity
-                    style={[styles.priorityButton, priority === 'high' && styles.priorityHigh]}
-                    onPress={() => setPriority('high')}
-                >
-                    <Text style={styles.priorityText}>High</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.priorityButton, priority === 'medium' && styles.priorityMedium]}
-                    onPress={() => setPriority('medium')}
-                >
-                    <Text style={styles.priorityText}>Medium</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.priorityButton, priority === 'low' && styles.priorityLow]}
-                    onPress={() => setPriority('low')}
-                >
-                    <Text style={styles.priorityText}>Low</Text>
-                </TouchableOpacity>
-            </View>
 
             {/* Submit Button */}
             <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
