@@ -1,50 +1,97 @@
-# Welcome to your Expo app 👋
+# User Notifier 🚨
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**User Notifier** is a comprehensive personal safety and emergency response platform connected to a real-time command center. It bridges the gap between citizens and rapid response teams, providing tools for instant incident reporting, route safety analysis, and live emergency broadcasting.
 
-## Get started
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Stack](https://img.shields.io/badge/Stack-MERN%20%2B%20Expo-blue)
 
-1. Install dependencies
+## 🚀 Key Features
 
-   ```bash
-   npm install
-   ```
+- **📍 Path Explorer:** Navigate safely with real-time route planning that visualizes safe paths and avoids high-risk zones using Google Maps integration.
+- **🆘 One-Tap SOS:** Instantly report emergency incidents (Accident, Fire, Medical) with precise GPS location and priority levels.
+- **⚡ Real-Time Ticker:** Stay informed with a live-streaming ticker of nearby accidents and safety alerts, powered by Socket.IO.
+- **🌗 Dynamic Themes:** Seamlessly switch between System, Light, and Dark modes for optimal visibility in any environment.
+- **📞 Emergency Hub:** Direct access to 24/7 customer care and essential helpline numbers.
 
-2. Start the app
+## 🛠️ Technical Stack
 
-   ```bash
-    npx expo start
-   ```
+| Category | Technologies |
+|----------|--------------|
+| **Frontend** | React Native (Expo), TypeScript, Expo Router |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB (Mongoose) |
+| **Real-Time** | Socket.IO |
+| **Services** | Google Maps API, Expo Location, Expo SecureStore |
 
-In the output, you'll find options to open the app in a
+## 🏗️ Architecture
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+The system follows a **Event-Driven Client-Server Architecture**:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```mermaid
+graph LR
+    Mobile[App (Expo)] <-->|WebSocket| Socket[Socket Service]
+    Mobile <-->|REST API| API[Express Backend]
+    API <-->|Query| DB[(MongoDB)]
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+For a deep dive into the system design, check out the [Architecture Documentation](./architecture.md).
 
-## Learn more
+## 📦 Installation & Setup
 
-To learn more about developing your project with Expo, look at the following resources:
+### Prerequisites
+- Node.js (v18+)
+- MongoDB (Running locally or Atlas URI)
+- Expo Go (on mobile) or Android Studio/Xcode (for simulation)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/KmSasikumar/User_Notifier.git
+cd User_Notifier
+```
 
-## Join the community
+### 2. Backend Setup
+Navigate to the `data` directory and install dependencies:
+```bash
+cd data
+npm install
+```
+Create a `.env` file in `data/` with:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+API_KEY=your_secret_api_key
+JWT_SECRET=your_jwt_secret
+```
+Start the server:
+```bash
+npm start
+```
 
-Join our community of developers creating universal apps.
+### 3. Frontend Setup
+Navigate back to the root and install app dependencies:
+```bash
+cd ..
+npm install
+```
+Start the Expo development server:
+```bash
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🔒 Security
+- **API Key Protection:** Inter-service communication is secured via `x-api-key`.
+- **JWT Authentication:** User sessions are managed with robust JSON Web Tokens.## 👨‍💻 Author
+
+| Information | Details |
+| :--- | :--- |
+| **Name** | **K. SasiKumar** |
+| **Registration No** | **22BCE11638** |
+| **Email** | Kommamani012@gmail.com |
+
+
+
+## 🤝 Contributing
+Contributions are welcome! Please open an issue or submit a pull request for any improvements.
+
+---
+*Built with ❤️ for safer cities.*
