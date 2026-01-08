@@ -80,7 +80,9 @@ npx expo start
 
 ## 🔒 Security
 - **API Key Protection:** Inter-service communication is secured via `x-api-key`.
-- **JWT Authentication:** User sessions are managed with robust JSON Web Tokens.## 👨‍💻 Author
+- **JWT Authentication:** User sessions are managed with robust JSON Web Tokens.
+-
+- ## 👨‍💻 Author
 
 | Information | Details |
 | :--- | :--- |
