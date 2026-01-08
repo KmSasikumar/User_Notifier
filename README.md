@@ -29,9 +29,9 @@ The system follows a **Event-Driven Client-Server Architecture**:
 
 ```mermaid
 graph LR
-    Mobile[App (Expo)] <-->|WebSocket| Socket[Socket Service]
-    Mobile <-->|REST API| API[Express Backend]
-    API <-->|Query| DB[(MongoDB)]
+    Mobile["App (Expo)"] <-->|WebSocket| Socket["Socket Service"]
+    Mobile <-->|"REST API"| API["Express Backend"]
+    API <-->|Query| DB[("MongoDB")]
 ```
 
 For a deep dive into the system design, check out the [Architecture Documentation](./architecture.md).
@@ -80,7 +80,9 @@ npx expo start
 
 ## 🔒 Security
 - **API Key Protection:** Inter-service communication is secured via `x-api-key`.
-- **JWT Authentication:** User sessions are managed with robust JSON Web Tokens.## 👨‍💻 Author
+- **JWT Authentication:** User sessions are managed with robust JSON Web Tokens.
+
+## 👨‍💻 Author
 
 | Information | Details |
 | :--- | :--- |
